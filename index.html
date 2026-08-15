@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>118 Days Study Graph</title>
+    <style>
+        /* CSS Variables for a classic, clean theme */
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --primary-color: #4a90e2;
+            --border-color: #e1e4e8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sticky Header with Search Bar */
+        .header-container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container h1 {
+            margin: 0 0 15px 0;
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+
+        .search-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Responsive Grid Layout for Desktop & Mobile */
+        .graph-grid {
+            display: grid;
+            /* Auto-adjusts columns: 1 on mobile, 3-4 on desktop */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Day Card Styling */
+        .day-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .day-card h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .day-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            min-height: 180px;
+            object-fit: cover;
+        }
+
+        /* Message when no results match */
+        .no-results {
+            display: none;
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Mobile specific spacing adjustments */
+        @media (max-width: 600px) {
+            .graph-grid {
+                padding: 15px;
+                gap: 15px;
+            }
+            .header-container h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-container">
+        <h1>118 Days Study Graph</h1>
+        <div class="search-wrapper">
+            <!-- Search input limited to numbers -->
+            <input type="number" id="searchInput" placeholder="Search Day (e.g. 1, 45, 118)..." min="1" max="118">
+        </div>
+    </header>
+
+    <main class="graph-grid" id="graphContainer">
+        <!-- The cards will be generated here by JavaScript -->
+        <div class="no-results" id="noResultsMsg">No matching days found.</div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const totalDays = 118;
+            const container = document.getElementById('graphContainer');
+            const searchInput = document.getElementById('searchInput');
+            const noResultsMsg = document.getElementById('noResultsMsg');
+
+            // 1. Generate all 118 Day Cards dynamically
+            for (let i = 1; i <= totalDays; i++) {
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                card.setAttribute('data-day', i);
+
+                // We use loading="lazy" so off-screen images don't download until the user scrolls to them
+                // We also add a fallback mechanism in case an image link is broken
+                card.innerHTML = `
+                    <h2>Day ${i}</h2>
+                    <img 
+                        src="http://archivefiles.github.io/study-graph/day${i}.png" 
+                        alt="Study Graph for Day ${i}" 
+                        loading="lazy"
+                        onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22180%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eeeeee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2214px%22 fill=%22%23999999%22%3EImage Missing%3C/text%3E%3C/svg%3E';"
+                    >
+                `;
+                // Insert card before the "no results" message
+                container.insertBefore(card, noResultsMsg);
+            }
+
+            // 2. Add Search Functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                const cards = document.querySelectorAll('.day-card');
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const dayNumber = card.getAttribute('data-day');
+                    
+                    // Show exact matches or partial matches (e.g. typing "1" shows 1, 10, 11...)
+                    if (searchTerm === '' || dayNumber.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show "No Results" message if nothing matches
+                if (visibleCount === 0) {
+                    noResultsMsg.style.display = 'block';
+                } else {
+                    noResultsMsg.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
