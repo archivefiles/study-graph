@@ -59,6 +59,7 @@
             padding: 20px;
             max-width: 1000px;
             margin: 0 auto;
+            align-items: start; /* Prevents cards from stretching vertically */
         }
 
         /* Day Card */
@@ -83,14 +84,16 @@
             position: relative;
             cursor: pointer;
             border: 1px solid #eee;
+            background-color: #eeeeee;
         }
 
         .img-container img {
             width: 100%;
-            height: auto; /* Maintains natural aspect ratio */
+            height: auto;
+            max-height: 220px; /* Limits maximum image height in card */
             display: block;
             border-radius: 0;
-            object-fit: contain; /* Displays full uncropped image */
+            object-fit: contain;
         }
 
         /* Hover Overlay ("View Image" text) */
@@ -223,7 +226,7 @@
                             src="${imgSrc}" 
                             alt="Study Graph for Day ${i}" 
                             loading="lazy"
-                            onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22180%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eeeeee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2214px%22 fill=%22%23000000%22%3EImage Missing%3C/text%3E%3C/svg%3E';"
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22140%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eeeeee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2214px%22 fill=%22%23000000%22%3EImage Missing%3C/text%3E%3C/svg%3E';"
                         >
                         <div class="img-overlay">View Image</div>
                     </div>
