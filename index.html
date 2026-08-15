@@ -5,30 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>118 Days Study Graph</title>
     <style>
-        /* CSS Variables for a classic, clean theme */
-        :root {
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --primary-color: #4a90e2;
-            --border-color: #e1e4e8;
-        }
-
+        /* Base styling */
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: black;
             margin: 0;
             padding: 0;
         }
 
-        /* Sticky Header with Search Bar */
+        /* Sticky Header */
         .header-container {
-            background-color: var(--card-bg);
+            background-color: #ffffff;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-bottom: 2px solid #000;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -37,93 +28,153 @@
         .header-container h1 {
             margin: 0 0 15px 0;
             font-size: 1.8rem;
-            color: var(--text-main);
+            color: black; /* Text is black */
         }
 
+        /* Search Bar */
         .search-wrapper {
             max-width: 500px;
             margin: 0 auto;
-            position: relative;
         }
 
         .search-wrapper input {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 15px;
             font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 30px;
+            border: 2px solid #000; /* No rounded corners */
+            border-radius: 0; 
             outline: none;
             box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .search-wrapper input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+            background-color: #f9f9f9;
         }
 
-        /* Responsive Grid Layout for Desktop & Mobile */
+        /* 2-Column Grid Layout */
         .graph-grid {
             display: grid;
-            /* Auto-adjusts columns: 1 on mobile, 3-4 on desktop */
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 30px;
-            max-width: 1200px;
+            grid-template-columns: 1fr 1fr; /* Maximum 2 images per row */
+            gap: 20px;
+            padding: 20px;
+            max-width: 1000px; /* Constrains width on large screens */
             margin: 0 auto;
         }
 
-        /* Day Card Styling */
+        /* Day Card */
         .day-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background-color: #ffffff;
+            border: 1px solid #000; /* No rounded corners */
+            border-radius: 0; 
             padding: 15px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .day-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
 
         .day-card h2 {
             margin: 0 0 15px 0;
             font-size: 1.3rem;
-            color: var(--primary-color);
-            border-bottom: 2px solid #f0f0f0;
+            color: black; /* Text is black */
+            border-bottom: 1px solid #ccc;
             padding-bottom: 10px;
         }
 
-        .day-card img {
+        /* Image Container with Hover Effect */
+        .img-container {
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+
+        .img-container img {
             width: 100%;
-            height: auto;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            min-height: 180px;
+            display: block;
+            border-radius: 0; /* No rounded corners */
+            min-height: 150px;
             object-fit: cover;
         }
 
-        /* Message when no results match */
-        .no-results {
-            display: none;
-            text-align: center;
-            grid-column: 1 / -1;
-            padding: 40px;
+        /* Hover Overlay ("View Image" text) */
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
-            color: var(--text-muted);
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
         }
 
-        /* Mobile specific spacing adjustments */
+        .img-container:hover .img-overlay {
+            opacity: 1; /* Shows text on hover */
+        }
+
+        /* Modal / Full Image Viewer */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Close Button (Top Right) */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid #000;
+            border-radius: 0; /* No rounded corners */
+            text-transform: uppercase;
+        }
+
+        .close-btn:hover {
+            background-color: #cccccc;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 5px solid #ffffff; /* Gives it a framed classic look */
+            border-radius: 0; /* No rounded corners */
+        }
+
+        /* No Results Message */
+        .no-results {
+            display: none;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: black;
+        }
+
+        /* Mobile specific spacing */
         @media (max-width: 600px) {
             .graph-grid {
-                padding: 15px;
-                gap: 15px;
-            }
-            .header-container h1 {
-                font-size: 1.5rem;
+                grid-template-columns: 1fr; /* Falls back to 1 column on small phones for readability */
+                padding: 10px;
             }
         }
     </style>
@@ -133,15 +184,21 @@
     <header class="header-container">
         <h1>118 Days Study Graph</h1>
         <div class="search-wrapper">
-            <!-- Search input limited to numbers -->
-            <input type="number" id="searchInput" placeholder="Search Day (e.g. 1, 45, 118)..." min="1" max="118">
+            <!-- Changed type to "text" so user can type "Day 1" -->
+            <input type="text" id="searchInput" placeholder="Search (e.g. Day 1, 45, Day 118)...">
         </div>
     </header>
 
     <main class="graph-grid" id="graphContainer">
-        <!-- The cards will be generated here by JavaScript -->
+        <!-- Cards generated by JavaScript -->
         <div class="no-results" id="noResultsMsg">No matching days found.</div>
     </main>
+
+    <!-- Modal for viewing full images -->
+    <div class="modal" id="imageModal">
+        <div class="close-btn" id="closeModal">Close</div>
+        <img id="modalImage" src="" alt="Full view">
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -149,39 +206,47 @@
             const container = document.getElementById('graphContainer');
             const searchInput = document.getElementById('searchInput');
             const noResultsMsg = document.getElementById('noResultsMsg');
+            
+            // Modal Elements
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const closeBtn = document.getElementById('closeModal');
 
-            // 1. Generate all 118 Day Cards dynamically
+            // 1. Generate all 118 Day Cards
             for (let i = 1; i <= totalDays; i++) {
+                const imgSrc = `http://archivefiles.github.io/study-graph/day${i}.png`;
                 const card = document.createElement('div');
                 card.className = 'day-card';
                 card.setAttribute('data-day', i);
 
-                // We use loading="lazy" so off-screen images don't download until the user scrolls to them
-                // We also add a fallback mechanism in case an image link is broken
                 card.innerHTML = `
                     <h2>Day ${i}</h2>
-                    <img 
-                        src="http://archivefiles.github.io/study-graph/day${i}.png" 
-                        alt="Study Graph for Day ${i}" 
-                        loading="lazy"
-                        onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22180%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eeeeee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2214px%22 fill=%22%23999999%22%3EImage Missing%3C/text%3E%3C/svg%3E';"
-                    >
+                    <div class="img-container" onclick="openModal('${imgSrc}')">
+                        <img 
+                            src="${imgSrc}" 
+                            alt="Study Graph for Day ${i}" 
+                            loading="lazy"
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22180%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eeeeee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2214px%22 fill=%22%23000000%22%3EImage Missing%3C/text%3E%3C/svg%3E';"
+                        >
+                        <div class="img-overlay">View Image</div>
+                    </div>
                 `;
-                // Insert card before the "no results" message
                 container.insertBefore(card, noResultsMsg);
             }
 
-            // 2. Add Search Functionality
+            // 2. Text-based Search Functionality
             searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.trim();
+                // Convert input to lowercase for easy matching
+                const searchTerm = e.target.value.toLowerCase().trim();
                 const cards = document.querySelectorAll('.day-card');
                 let visibleCount = 0;
 
                 cards.forEach(card => {
                     const dayNumber = card.getAttribute('data-day');
+                    const dayString = `day ${dayNumber}`; // Creates "day 1", "day 2", etc.
                     
-                    // Show exact matches or partial matches (e.g. typing "1" shows 1, 10, 11...)
-                    if (searchTerm === '' || dayNumber.includes(searchTerm)) {
+                    // Matches if they type just the number OR the phrase "day X"
+                    if (searchTerm === '' || dayString.includes(searchTerm) || dayNumber.includes(searchTerm)) {
                         card.style.display = 'block';
                         visibleCount++;
                     } else {
@@ -189,11 +254,32 @@
                     }
                 });
 
-                // Show "No Results" message if nothing matches
                 if (visibleCount === 0) {
                     noResultsMsg.style.display = 'block';
                 } else {
                     noResultsMsg.style.display = 'none';
+                }
+            });
+
+            // 3. Modal / Image Viewer Logic
+            // Attach open modal function to global window so inline onclick can find it
+            window.openModal = function(src) {
+                modalImg.src = src;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Stop background scrolling
+            }
+
+            // Close button click
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            });
+
+            // Click outside the image to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
                 }
             });
         });
